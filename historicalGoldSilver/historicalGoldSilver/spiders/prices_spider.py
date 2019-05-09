@@ -1,4 +1,5 @@
 import scrapy
+import calendar
 from ..items import HistoricalgoldsilverItem
 
 
@@ -20,18 +21,22 @@ class PricesSpider(scrapy.Spider):
 
         for row in response.xpath("//table[@id='curr_table']//tbody//tr"):
 
-            metal = response.xpath(
-                "//h2[@class='float_lang_base_1 inlineblock']//text()").extract_first()
+            # grab commodity, date, and price from table using xpath
+            commodity = response.xpath(
+                "//h2[@class='float_lang_base_1 inlineblock']//text()").extract_first().split(' ')[0]
             date = row.xpath('td[1]//text()').extract_first()
             price = row.xpath('td[2]//text()').extract_first()
-            mean = '1'
-            variance = '1'
 
-            items['metal'] = metal
-            items['date'] = date
+            # convert abbreviated date into numeric date with calendar
+            year = date.split(' ')[2]
+            month = list(calendar.month_abbr).index(date.split(' ')[0])
+            day = date.split(' ')[1].split(',')[0]
+            newDate = '{year}-{month}-{day}'.format(
+                year=year, month=month, day=day)
+
+            items['commodity'] = commodity
+            items['date'] = newDate
             items['price'] = price
-            items['mean'] = mean
-            items['variance'] = variance
 
             yield items
 

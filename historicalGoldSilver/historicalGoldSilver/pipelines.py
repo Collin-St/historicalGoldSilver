@@ -29,45 +29,37 @@ class HistoricalgoldsilverPipeline(object):
         self.curr.execute("DROP TABLE IF EXISTS gold, silver")
         self.curr.execute(
             """CREATE TABLE gold(
-              metal text,
+              commodity text,
               date text, 
-              price text, 
-              mean text, 
-              variance text)""")
+              price text)""")
         self.curr.execute(
             """CREATE TABLE silver(
-              metal text,
+              commodity text,
               date text, 
-              price text, 
-              mean text, 
-              variance text)""")
+              price text)""")
 
     def process_item(self, item, spider):
 
-        metal = item.get('metal')
+        commodity = item.get('commodity')
 
-        if(metal == 'Gold Futures Historical Data'):
+        if(commodity == 'Gold'):
             self.store_gold(item)
         else:
             self.store_silver(item)
         return item
 
     def store_gold(self, item):
-        self.curr.execute("""INSERT INTO gold VALUES (%s, %s, %s, %s, %s)""", (
-            item['metal'],
+        self.curr.execute("""INSERT INTO gold VALUES (%s, %s, %s)""", (
+            item['commodity'],
             item['date'],
-            item['price'],
-            item['mean'][0],
-            item['variance'][0]
+            item['price']
         ))
         self.conn.commit()
 
     def store_silver(self, item):
-        self.curr.execute("""INSERT INTO silver VALUES (%s, %s, %s, %s, %s)""", (
-            item['metal'],
+        self.curr.execute("""INSERT INTO silver VALUES (%s, %s, %s)""", (
+            item['commodity'],
             item['date'],
-            item['price'],
-            item['mean'][0],
-            item['variance'][0]
+            item['price']
         ))
         self.conn.commit()

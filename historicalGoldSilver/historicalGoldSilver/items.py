@@ -10,9 +10,7 @@ import scrapy
 
 class HistoricalgoldsilverItem(scrapy.Item):
     # define the fields for your item here like:
-    metal = scrapy.Field()
+    commodity = scrapy.Field()
     date = scrapy.Field()
     price = scrapy.Field()
-    mean = scrapy.Field()
-    variance = scrapy.Field()
     # pass
